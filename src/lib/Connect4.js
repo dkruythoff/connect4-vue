@@ -123,7 +123,9 @@ export class Connect4 {
     if (colFreeIndex > -1) {
       this.board[col][colFreeIndex] = this.turn
       this.winner = getWinner(this.arrays, this.board, this.turn)
-      this.turn = this.turn === 1 ? 2 : 1
+      if (!this.winner) {
+        this.turn = this.turn === 1 ? 2 : 1
+      }
     }
   }
 }

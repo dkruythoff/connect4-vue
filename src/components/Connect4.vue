@@ -16,16 +16,18 @@
             :data-position="`${columnIndex}x${cellIndex}`"
             :class="{'cell':true,'cell--winner':cell.winner}"
             >
-            {{ cell.value === null ? ' ' : cell.value }}
+            <span :class="{'piece':true,'piece--1':cell.value===1,'piece--2':cell.value===2}">&nbsp;</span>
           </div>
           <div
             class="cell cell--preview"
-          >{{turn}}</div>
+            >
+            <span :class="{'piece':true,'piece--1':turn===1,'piece--2':turn===2}">&nbsp;</span>
+          </div>
       </div>
     </div>
     <div class="won">
-      <p>Game won!</p>
-      <button @click="startgame">Play again</button>
+      <p>{{ turn === 1 ? 'Red' : 'Yellow' }} wins!</p>
+      <button class="startgame" @click="startgame">Play again</button>
     </div>
   </div>
 </template>
@@ -98,21 +100,40 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+:root {
+  text-align: center;
+  font-family:'Courier New', Courier, monospace;
+}
 .game {
   position: relative;
   display: inline-block;
+  margin: auto;
+  text-align: left;
 }
 .won {
+  margin-top: 3rem;
+  font-size: 2rem;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
   padding: 2rem;
-  border: solid 1px #ccc;
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: rgb(32, 32, 32);
+  border: solid 2px #ccc;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
   display: none;
+  text-align: center;
+}
+.startgame {
+  font-size: 3rem;;
+  background-color: #405FCA;
+  color: white;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 0.5rem;
+  letter-spacing: 0.2rem;
 }
 .game--over .won {
   display: inline-block;
@@ -123,13 +144,19 @@ export default {
 
   display: flex;
   flex-direction: row;
+
+  padding: 1rem;
+  background-color: #405FCA;
+  border-radius: 2rem;
+  margin-top: 6rem;
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
 }
 .column {
   display: flex;
   flex-direction: column-reverse;
+  margin-top: -6rem;
 }
 .cell {
-  border: dashed 1px black;
   margin: 1rem;
   height: 4rem;
   width: 4rem;
@@ -137,25 +164,46 @@ export default {
   align-items: center;
   justify-content: center;
   position: relative;
+  border-radius: 50%;
+  box-shadow: inset 4px 4px rgba(0, 0, 0, 0.1);
+  border: solid 4px transparent;
 }
 .cell--winner:after {
-  content: "★";
+  content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 0.5rem;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: transparent;
+  border: solid 4px white;
+  border-radius: 50%;
 }
 .cell--preview {
   border: none;
   opacity: 0;
+  margin-top: 0.5rem;
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
 }
 .board--playable .column:not(.column--full):hover .cell--preview {
   opacity: 1;
 }
-.coordinates {
-  position: absolute;
-  top: 0.2rem;
-  right: 0.2rem;
-  font-size: 0.7rem;
+.piece {
+  background: radial-gradient(circle, rgba(255,255,255,1) 39%, rgba(230,230,230,1) 100%);
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.cell:not(.cell--preview) .piece--1,
+.cell:not(.cell--preview) .piece--2 {
+  box-shadow: inset 4px 4px rgba(0, 0, 0, 0.1);
+}
+.piece--1 {
+  background: rgb(255,0,0);
+  background: radial-gradient(circle, rgba(255,0,0,1) 85%, rgba(124,0,0,1) 100%);
+}
+.piece--2 {
+  background: rgb(255,250,0);
+  background: radial-gradient(circle, rgba(255,250,0,1) 85%, rgba(230,224,0,1) 100%);
 }
 </style>
