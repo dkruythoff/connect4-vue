@@ -47,7 +47,7 @@ export default {
   props: {
     cols: {
       type: Number,
-      default: 8
+      default: 7
     },
     rows: {
       type: Number,
@@ -105,6 +105,10 @@ export default {
   text-align: center;
   font-family:'Courier New', Courier, monospace;
 }
+:root, body {
+  padding: 0;
+  margin: 0;
+}
 .game {
   position: relative;
   display: inline-block;
@@ -127,7 +131,7 @@ export default {
   text-align: center;
 }
 .startgame {
-  font-size: 3rem;;
+  font-size: 3rem;
   background-color: #405FCA;
   color: white;
   text-transform: uppercase;
@@ -140,7 +144,6 @@ export default {
 }
 .board {
   display: inline-block;
-  font-size: 32px;
 
   display: flex;
   flex-direction: row;
@@ -148,7 +151,7 @@ export default {
   padding: 1rem;
   background-color: #405FCA;
   border-radius: 2rem;
-  margin-top: 6rem;
+  margin-top: 3rem;
   box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
 }
 .column {
@@ -205,5 +208,21 @@ export default {
 .piece--2 {
   background: rgb(255,250,0);
   background: radial-gradient(circle, rgba(255,250,0,1) 85%, rgba(230,224,0,1) 100%);
+}
+@media screen and (orientation:portrait) {
+  :root {
+    font-size: 1.8vw;
+  }
+  .game {
+    margin-top: 5vw;
+  }
+}
+@media screen and (orientation:landscape) {
+  :root {
+    font-size: 1.8vh;
+  }
+  .game {
+    margin-top: 5vh;
+  }
 }
 </style>
