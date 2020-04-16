@@ -2,13 +2,14 @@
   <div :class="{'game':true,'game--over':gameIsWon}">
     <div
       v-if="board"
-      :class="{'board':true,'board--playable':!gameIsWon}"
+      :class="{'board':true,'board--playable':!gameIsWon,'board--turn-1':turn===1,'board--turn-2':turn===2}"
       >
       <div
         v-for="(column, columnIndex) in board"
         :key="`board-column-${columnIndex}`"
-        :class="{'column':true,'column--full':freeIndexPerCol[columnIndex]===-1}"
-        @click="makeMove(columnIndex)"
+        :class="{'column':true,'column--full':freeIndexPerCol[columnIndex]===-1,'column--highlighted':highlightedColumn===columnIndex}"
+        @touchend="handleColumnTouchend(columnIndex)"
+        @click="handleColumnClick(columnIndex)"
         >
           <div
             v-for="(cell, cellIndex) in column"
@@ -41,7 +42,9 @@ export default {
       game: null,
       board: null,
       turn: 1,
-      winner: false
+      winner: false,
+      highlightedColumn: null,
+      touchEnabled: false
     }
   },
   props: {
@@ -67,11 +70,38 @@ export default {
       this.game = new Connect4(this.cols, this.rows)
       this.updateFromGame()
     },
-    makeMove(col) {
-      if (!this.gameIsWon && this.freeIndexPerCol[col]>-1) {
-        this.game.makeMove(col)
-        this.updateFromGame()
+    handleColumnTouchend(col) {
+      this.touchEnabled = true
+
+      if (this.gameIsWon || this.freeIndexPerCol[col] === -1) {
+        return
       }
+
+      if (this.highlightedColumn !== col) {
+        this.highlightedColumn = col
+      } else {
+        this.makeMove(col)
+        this.highlightedColumn = null
+      }
+
+    },
+    handleColumnClick(col) {
+      if (this.touchEnabled) {
+        this.touchEnabled = false
+        return
+      }
+
+      if (this.gameIsWon || this.freeIndexPerCol[col] === -1) return
+
+      if (this.touchEnabled) {
+        this.touchEnabled = false
+      } else {
+        this.makeMove(col)
+      }
+    },
+    makeMove(col) {
+      this.game.makeMove(col)
+      this.updateFromGame()
     },
     updateFromGame() {
       this.turn = this.game.turn
@@ -159,6 +189,9 @@ export default {
   flex-direction: column-reverse;
   margin-top: -6rem;
 }
+/* .column--highlighted {
+  background-color: rgba(124,0,0,0.5);
+} */
 .cell {
   margin: 1rem;
   height: 4rem;
@@ -187,8 +220,15 @@ export default {
   margin-top: 0.5rem;
   box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
 }
-.board--playable .column:not(.column--full):hover .cell--preview {
+.board--playable .column:not(.column--full):hover .cell--preview,
+.board--playable .column--highlighted:not(.column--full) .cell--preview {
   opacity: 1;
+}
+.board--playable.board--turn-1 .column--highlighted:not(.column--full) .cell {
+  background: radial-gradient(circle, rgba(255,0,0,1) 85%, rgba(124,0,0,1) 100%);
+}
+.board--playable.board--turn-2 .column--highlighted:not(.column--full) .cell {
+  background: radial-gradient(circle, rgba(255,250,0,1) 85%, rgba(230,224,0,1) 100%);
 }
 .piece {
   background: radial-gradient(circle, rgba(255,255,255,1) 39%, rgba(230,230,230,1) 100%);
